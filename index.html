@@ -152,7 +152,9 @@ button{font:inherit; color:inherit}
 .amostra .lacuna{opacity:.45}
 
 .acoes-menu{grid-area:acoes; flex:none; position:sticky; bottom:-10px; z-index:5; display:grid; gap:6px; margin-inline:-16px; padding:6px 16px 10px; background:linear-gradient(to bottom, transparent, var(--bg) 8px)}
-.recorde-menu{margin:0; font-family:var(--mono); font-size:.7rem; color:var(--ink-2); text-align:center}
+.opcao label{position:relative}
+.recorde-modo{position:absolute; top:9px; right:9px; display:inline-flex; align-items:center; gap:3px; padding:2px 7px; border-radius:999px; background:color-mix(in srgb, var(--ouro) 18%, var(--superficie)); border:1px solid color-mix(in srgb, var(--ouro) 45%, transparent); color:var(--ink); font-family:var(--mono); font-size:.62rem; line-height:1.3; font-variant-numeric:tabular-nums}
+.recorde-modo svg{width:10px; height:10px; fill:var(--ouro)}
 .sem-dados{display:grid; gap:12px; padding:14px; border-radius:14px; background:color-mix(in srgb, var(--erro) 9%, var(--superficie)); border:1px solid color-mix(in srgb, var(--erro) 35%, transparent); font-size:.9rem}
 .sem-dados p{margin:0}
 .sem-dados code{font-family:var(--mono); font-size:.85em}
@@ -420,7 +422,6 @@ button{font:inherit; color:inherit}
 
     <div class="acoes-menu">
       <button class="btn-primario" id="btn-comecar" type="submit" form="form-menu" disabled>Começar partida <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-      <p class="recorde-menu" id="recorde-menu" hidden></p>
     </div>
   </section>
 
@@ -556,6 +557,7 @@ const ICONES = {
   mudo: svg('<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>'),
   fechar: svg('<path d="M6 6l12 12M18 6L6 18"/>', 2.2),
   instalar: svg('<path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14"/>', 2.1),
+  estrelaMini: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>',
   estrela: '<svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>',
 };
 
@@ -691,6 +693,7 @@ function montarMenu() {
         <span class="fluxo"><span class="ico a">${TIPOS[m.pista].ico}</span>${ICONES.seta}<span class="ico b">${TIPOS[m.resposta].ico}</span></span>
         <span class="tit">${tituloModo(m)}</span>
         <span class="desc">${m.dica}</span>
+        <span class="recorde-modo" hidden></span>
       </label>
     </div>`).join('');
   $('#lista-niveis').innerHTML = NIVEIS.map(n => `
@@ -713,11 +716,15 @@ function montarMenu() {
 
 const AMOSTRA = mascarar('Lobo Frontal', mulberry32(11)).html;
 function atualizarMenu() {
-  const m = MODOS.find(x => x.id === cfg.modo), n = NIVEIS.find(x => x.id === cfg.nivel);
+  const n = NIVEIS.find(x => x.id === cfg.nivel);
   $('#nivel-det').innerHTML = `<span>${n.nome}: ${n.detalhe.join(' · ')}</span>${n.oculta ? `<span class="amostra" aria-hidden="true">${AMOSTRA}</span>` : ''}`;
-  const rec = armazem.ler(`${CHAVE}:recorde:${m.id}:${n.id}`);
-  $('#recorde-menu').hidden = !rec;
-  $('#recorde-menu').textContent = rec ? `Seu recorde em ${tituloModo(m)} · ${n.nome}: ${fmt(rec.pontos)} pts em ${rec.jogadas} jogadas` : '';
+  // Recorde como selo no card de cada modo (na dificuldade escolhida); modo nunca jogado fica sem selo.
+  for (const m of MODOS) {
+    const selo = $(`label[for="modo-${m.id}"] .recorde-modo`);
+    const rec = armazem.ler(`${CHAVE}:recorde:${m.id}:${n.id}`);
+    selo.hidden = !rec;
+    selo.innerHTML = rec ? `${ICONES.estrelaMini}${fmt(rec.pontos)}<span class="sr"> pontos, seu recorde no ${n.nome}</span>` : '';
+  }
 }
 
 function montarLeque(e) {
