@@ -203,6 +203,7 @@ button{font:inherit; color:inherit}
 .elo{position:relative; display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:999px; overflow:hidden; background:var(--superficie); border:1px solid var(--line); font-family:var(--mono); font-size:.68rem; letter-spacing:.03em; color:var(--ink-2); white-space:nowrap; transition:background-color .3s, color .3s, border-color .3s}
 .elo svg{width:14px; height:14px}
 .elo.ativa{background:var(--eosin); border-color:var(--eosin); color:var(--superficie)}
+.elo.ativa.para-pista{background:var(--hema); border-color:var(--hema)}
 .elo.ativa svg{animation:quica .8s var(--suave) infinite}
 .elo.espiando{border-color:var(--ouro); color:var(--ink)}
 .elo .barra{position:absolute; left:0; right:0; bottom:0; height:3px; background:var(--ouro); transform-origin:left}
@@ -266,7 +267,7 @@ button{font:inherit; color:inherit}
 .verso-ico{width:36cqi; height:36cqi; border-radius:50%; display:grid; place-items:center; background:rgba(255,255,255,.14); box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35)}
 .verso-ico svg{width:60%; height:60%}
 .verso-rot{position:absolute; left:0; right:0; bottom:10cqi; text-align:center; font-family:var(--mono); font-size:max(7px,7cqi); letter-spacing:.14em; text-transform:uppercase; opacity:.85}
-.bandeja[data-lado="resposta"]:not(.ativa) .verso{filter:saturate(.5) brightness(.88)}
+.bandeja.espera .verso{filter:saturate(.5) brightness(.88)}
 
 .frente{--cor-lado:var(--verso-pista-2); transform:rotateY(180deg); display:flex; flex-direction:column; background:var(--face); color:var(--face-ink); border-top:max(3px,2.4cqi) solid var(--cor-lado)}
 [data-lado="resposta"] .frente{--cor-lado:var(--verso-resposta-2)}
@@ -361,7 +362,7 @@ button{font:inherit; color:inherit}
         <button class="icone-btn btn-som" type="button" aria-pressed="true" aria-label="Som e vibração"></button>
       </div>
       <h1 id="titulo-jogo">Memória do <span class="realce">Encéfalo<svg viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 7 Q 14 1 26 6 T 50 6 T 74 6 T 98 5"/></svg></span></h1>
-      <p class="lead">Vire uma pista e ache a resposta que forma o par. Acertos seguidos multiplicam os pontos.</p>
+      <p class="lead">Vire uma pista e uma resposta, em qualquer ordem, e forme os pares. Acertos seguidos multiplicam os pontos.</p>
       <div class="leque" id="leque" role="button" tabindex="0" aria-label="Mostrar outra estrutura de exemplo"></div>
       <p class="leque-dica" id="fonte-info">Carregando estruturas…</p>
       <div class="instalar" id="instalar" hidden>
@@ -417,7 +418,7 @@ button{font:inherit; color:inherit}
         <div class="rotulo"><b>Pistas</b><span id="rot-pista">Estrutura</span></div>
         <div class="grade" id="grade-pista"></div>
       </div>
-      <div class="elo" id="elo"><span id="elo-seta"></span><span id="elo-texto">vire uma pista</span><i class="barra" hidden></i></div>
+      <div class="elo" id="elo"><span id="elo-seta"></span><span id="elo-texto">vire uma carta de cada lado</span><i class="barra" hidden></i></div>
       <div class="bandeja" data-lado="resposta" id="bandeja-resposta">
         <div class="rotulo"><b>Respostas</b><span id="rot-resposta">Nome</span></div>
         <div class="grade" id="grade-resposta"></div>
@@ -517,6 +518,8 @@ const ICONES = {
   check: svg('<path d="M5 12.5l4.2 4.2L19 7"/>', 3),
   seta: svg('<path d="M5 12h14M13 6l6 6-6 6"/>', 2.2),
   baixo: svg('<path d="M12 5v14M6 13l6 6 6-6"/>', 2.2),
+  cima: svg('<path d="M12 19V5M6 11l6-6 6 6"/>', 2.2),
+  ambos: svg('<path d="M12 4v16M7.5 8.5 12 4l4.5 4.5M7.5 15.5 12 20l4.5-4.5"/>', 2.2),
   voltar: svg('<path d="M19 12H5M11 6l-6 6 6 6"/>', 2.1),
   reiniciar: svg('<path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4.5v4h4"/>', 2.1),
   som: svg('<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>'),
@@ -815,7 +818,7 @@ function montarMesa() {
     $(`#grade-${lado}`).replaceChildren(...jogo.cartas[lado].map((c, i) => (c.el = elCarta(c, i))));
   }
   destacar(null);
-  textoElo('vire uma pista');
+  eloLivre();
   $('#v-tempo').textContent = '00:00';
   $('#v-pontos').dataset.v = 0;
   atualizarHUD();
@@ -887,8 +890,8 @@ async function iniciarPartida() {
     if (!(await espiar(jogo.nivel.espiar, g))) return;
   }
   jogo.estado = 'jogando';
-  destacar('pista');
-  textoElo('vire uma pista');
+  destacar(null);
+  eloLivre();
 }
 
 function trocarTela(de, para) {
@@ -955,10 +958,12 @@ async function espiar(ms, g) {
   return g === geracao;
 }
 
-function textoElo(t, seta = true) {
+/* seta: 'baixo', 'cima', 'ambos' ou false */
+function textoElo(t, seta = 'baixo') {
   $('#elo-texto').textContent = t;
-  $('#elo-seta').innerHTML = seta ? ICONES.baixo : '';
+  $('#elo-seta').innerHTML = seta ? ICONES[seta] : '';
 }
+const eloLivre = () => textoElo('vire uma carta de cada lado', 'ambos');
 
 /* Barrinha que esvazia no elo: mostra quanto tempo falta (espiada, leitura após erro). */
 let animBarra = null;
@@ -980,16 +985,19 @@ function tempoLeitura(...cartas) {
   return Math.min(5000, 1800 + letras * 25);
 }
 
-/* Destaca a vez: 'pista', 'resposta' ou nenhuma (null). */
+/* Destaca o lado que falta virar: 'pista' ou 'resposta'. Com null, os dois lados estão livres
+   (a jogada pode começar por qualquer um) e nada fica apagado. */
 function destacar(lado) {
-  $('#bandeja-pista').classList.toggle('ativa', lado === 'pista');
-  $('#bandeja-resposta').classList.toggle('ativa', lado === 'resposta');
-  $('#elo').classList.toggle('ativa', lado === 'resposta');
-  $('#slot-pista').classList.toggle('vez', lado === 'pista');
-  $('#slot-resposta').classList.toggle('vez', lado === 'resposta');
-  if (lado === 'resposta' && !RM.matches) {
-    jogo.cartas.resposta.filter(c => !c.acertada).forEach((c, i) =>
-      c.el.animate({ translate: ['0 0', '0 -7px', '0 0'] }, { duration: 440, delay: i * 30, easing: 'ease-out' }));
+  for (const l of ['pista', 'resposta']) {
+    $(`#bandeja-${l}`).classList.toggle('ativa', lado === l);
+    $(`#bandeja-${l}`).classList.toggle('espera', !!lado && lado !== l);
+    $(`#slot-${l}`).classList.toggle('vez', lado === l);
+  }
+  $('#elo').classList.toggle('ativa', !!lado);
+  $('#elo').classList.toggle('para-pista', lado === 'pista');
+  if (lado && !RM.matches) {
+    jogo.cartas[lado].filter(c => !c.acertada && !c.aberta).forEach((c, i) =>
+      c.el.animate({ translate: ['0 0', `0 ${lado === 'resposta' ? -7 : 7}px`, '0 0'] }, { duration: 440, delay: i * 30, easing: 'ease-out' }));
   }
 }
 
@@ -997,7 +1005,7 @@ function destacar(lado) {
 function vazioHTML(lado) {
   const tipo = jogo.modo[lado];
   return `<div class="slot-vazio"><span class="ico ${lado === 'pista' ? 'a' : 'b'}">${TIPOS[tipo].ico}</span>`
-       + `<span>${lado === 'pista' ? 'Vire uma pista' : 'Depois, ache a resposta'}</span>`
+       + `<span>${lado === 'pista' ? 'Carta de cima' : 'Carta de baixo'}</span>`
        + `<span class="slot-tipo">${TIPOS[tipo].rotulo}</span></div>`;
 }
 
@@ -1046,32 +1054,31 @@ function aoTocar(c) {
   if (!c || !jogo) return;
   if (c.acertada) { if (jogo.estado === 'jogando' || jogo.estado === 'fim') abrirFicha(c.e); return; }
   if (jogo.estado !== 'jogando' || c.aberta) return;
+  // Uma jogada = uma carta de cada lado, em qualquer ordem (pista → resposta ou resposta → pista).
   const a = jogo.aberta;
-  if (c.lado === 'pista') {
-    if (a.pista) { balancar($('#bandeja-resposta'), 5); aviso('Agora escolha uma carta de resposta'); som.cutucar(); return; }
-    iniciarRelogio();
-    virar(c, true);
-    a.pista = c;
-    destacar('resposta');
-    textoElo(`agora ache: ${TIPOS[jogo.modo.resposta].rotulo.toLowerCase()}`);
-    atualizarLeitura();
-  } else {
-    if (!a.pista) {
-      balancar(c.el);
-      pulsar($('#bandeja-pista'), 1.02);
-      aviso(`Comece por uma pista: ${TIPOS[jogo.modo.pista].rotulo.toLowerCase()}`);
-      som.cutucar();
-      return;
-    }
-    virar(c, true);
-    a.resposta = c;
-    jogo.jogadas++;
-    jogo.estado = 'conferindo';
-    atualizarHUD();
-    atualizarLeitura();
-    const g = geracao;
-    setTimeout(() => conferir(g), RM.matches ? 300 : 560);
+  const outro = c.lado === 'pista' ? 'resposta' : 'pista';
+  const rotuloOutro = TIPOS[jogo.modo[outro]].rotulo.toLowerCase();
+  if (a[c.lado]) {
+    balancar($(`#bandeja-${outro}`), 5);
+    aviso(`Agora vire uma carta do outro lado: ${rotuloOutro}`);
+    som.cutucar();
+    return;
   }
+  iniciarRelogio();
+  virar(c, true);
+  a[c.lado] = c;
+  atualizarLeitura();
+  if (!a[outro]) {
+    destacar(outro);
+    textoElo(`agora ache: ${rotuloOutro}`, outro === 'resposta' ? 'baixo' : 'cima');
+    return;
+  }
+  jogo.jogadas++;
+  jogo.estado = 'conferindo';
+  destacar(null);
+  atualizarHUD();
+  const g = geracao;
+  setTimeout(() => conferir(g), RM.matches ? 300 : 560);
 }
 
 function conferir(g) {
@@ -1093,12 +1100,13 @@ function conferir(g) {
       explodir(c.el);
     }
     marcarLeitura('acerto');
-    flutuar(resposta.el, mult > 1 ? `+${ganho} ×${mult}` : `+${ganho}`);
+    const segunda = pista.abertaEm > resposta.abertaEm ? pista : resposta;
+    flutuar(segunda.el, mult > 1 ? `+${ganho} ×${mult}` : `+${ganho}`);
     som.acerto(jogo.combo);
     anunciar(`Acertou: ${pista.e.nome}. ${jogo.acertos} de ${jogo.nivel.pares} pares.`);
     jogo.aberta = { pista: null, resposta: null };
     const acabou = jogo.acertos === jogo.nivel.pares;
-    destacar(acabou ? null : 'pista');
+    destacar(null);
     atualizarHUD(true);
     if (acabou) {
       jogo.estado = 'fim';
@@ -1107,7 +1115,8 @@ function conferir(g) {
       setTimeout(() => vitoria(g), 700);
     } else {
       jogo.estado = 'jogando';
-      textoElo(jogo.combo > 1 ? `combo ×${mult}! vire outra pista` : 'vire uma pista');
+      if (jogo.combo > 1) textoElo(`combo ×${mult}! próximo par`, 'ambos');
+      else eloLivre();
       if (jogo.acertos === 1) aviso('Toque numa carta acertada para ver a ficha completa', 2800);
     }
   } else {
@@ -1118,7 +1127,7 @@ function conferir(g) {
     anunciar('Não formam um par. Toque para continuar.');
     atualizarHUD();
     // As cartas ficam abertas para leitura; um toque encerra a espera antes.
-    // O par continua na área de leitura até a próxima pista ser virada.
+    // O par continua na área de leitura até a próxima carta ser virada.
     const tempo = tempoLeitura(pista, resposta);
     const retomar = () => {
       if (g !== geracao || jogo.retomar !== retomar) return;
@@ -1128,9 +1137,9 @@ function conferir(g) {
       $('#elo').classList.remove('errou');
       for (const c of [pista, resposta]) { c.el.classList.remove('errou'); virar(c, false); }
       jogo.aberta = { pista: null, resposta: null };
-      destacar('pista');
+      destacar(null);
       jogo.estado = 'jogando';
-      textoElo('vire uma pista');
+      eloLivre();
     };
     jogo.retomar = retomar;
     jogo.tRetomar = setTimeout(retomar, tempo);
@@ -1430,7 +1439,7 @@ function ligarEventos() {
     if (jogo?.retomar) {
       jogo.retomar();
       const c = el && mapaCartas.get(el);
-      if (c?.lado === 'pista') aoTocar(c);
+      if (c) aoTocar(c);
       return;
     }
     if (el) aoTocar(mapaCartas.get(el));
