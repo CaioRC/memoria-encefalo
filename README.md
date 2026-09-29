@@ -6,7 +6,7 @@ Jogo da memória de neuroanatomia para estudar 12 estruturas do encéfalo: image
 
 ## Como jogar
 
-Vire uma carta de **pista** e depois ache a **resposta** que forma o par. Acertos seguidos multiplicam os pontos. Toque numa carta acertada para ver a ficha completa da estrutura.
+Vire uma carta de **pista** e depois ache a **resposta** que forma o par. Acertos seguidos multiplicam os pontos. Quando o par não combina, as cartas ficam abertas um tempo para leitura (toque para seguir antes). Toque numa carta acertada para ver a ficha completa da estrutura.
 
 | Modo | Pista | Resposta |
 |---|---|---|
@@ -17,9 +17,9 @@ Vire uma carta de **pista** e depois ache a **resposta** que forma o par. Acerto
 
 | Dificuldade | Pares | Espiada inicial | Texto |
 |---|---|---|---|
-| Fácil | 4 | 3 s | completo |
-| Médio | 6 | 1,5 s | completo |
-| Difícil | 8 | nenhuma | letras e palavras ocultas |
+| Fácil | 4 | 4 s | completo |
+| Médio | 6 | 2,5 s | completo |
+| Difícil | 8 | nenhuma | letras ocultas nos nomes; funções completas |
 
 ## Instalar no celular
 

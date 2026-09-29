@@ -1,8 +1,9 @@
 /* Service worker: guarda o jogo no aparelho para funcionar offline.
-   Estratégia "stale-while-revalidate": responde do cache e atualiza em segundo plano,
-   então mudanças no JSON ou no HTML aparecem a partir da próxima abertura do app.
+   - Página e JSON: busca na rede primeiro (mudanças aparecem na hora); sem rede, usa o cache.
+   - Imagens, ícones e fontes: respondem do cache e se atualizam em segundo plano.
    Troque VERSAO ao mudar a lista de arquivos básicos. */
-const VERSAO = 'encefalo-v1';
+const VERSAO = 'encefalo-v2';
+const ESPERA_REDE = 3500;   // ms; rede mais lenta que isso cai para o cache
 const BASICOS = [
   './',
   './index.html',
@@ -41,6 +42,26 @@ self.addEventListener('fetch', ev => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin && !FONTES.includes(url.origin)) return;
+
+  const redePrimeiro = req.mode === 'navigate' || /\.(html|json)$/.test(url.pathname);
+  if (redePrimeiro) {
+    ev.respondWith((async () => {
+      const cache = await caches.open(VERSAO);
+      try {
+        const r = await Promise.race([
+          fetch(req),
+          new Promise((_, falha) => setTimeout(() => falha(new Error('rede lenta')), ESPERA_REDE)),
+        ]);
+        if (r.ok) cache.put(req, r.clone());
+        return r;
+      } catch {
+        const salvo = await cache.match(req, { ignoreSearch: true })
+          || (req.mode === 'navigate' && await cache.match('./index.html'));
+        return salvo || Response.error();
+      }
+    })());
+    return;
+  }
 
   ev.respondWith((async () => {
     const cache = await caches.open(VERSAO);

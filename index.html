@@ -203,6 +203,8 @@ button{font:inherit; color:inherit}
 .elo.ativa svg{animation:quica .8s var(--suave) infinite}
 .elo.espiando{border-color:var(--ouro); color:var(--ink)}
 .elo .barra{position:absolute; left:0; right:0; bottom:0; height:3px; background:var(--ouro); transform-origin:left}
+.elo.errou{border-color:var(--erro); color:var(--ink)}
+.elo.errou .barra{background:var(--erro)}
 @keyframes quica{50%{translate:0 3px}}
 
 /* Área de leitura: as cartas abertas em tamanho legível, na zona do polegar */
@@ -534,9 +536,9 @@ const MODOS = [
   { id: 'nome-funcao', pista: 'nome', resposta: 'funcao', dica: 'Leia o nome e ache as funções certas.' },
 ];
 const NIVEIS = [
-  { id: 'facil', nome: 'Fácil', cor: '--mint', pares: 4, espiar: 3000, oculta: false, maxFuncoes: 3, orcamento: 170, detalhe: ['espiada de 3 s', 'texto completo'] },
-  { id: 'medio', nome: 'Médio', cor: '--ouro', pares: 6, espiar: 1500, oculta: false, maxFuncoes: 2, orcamento: 125, detalhe: ['espiada de 1,5 s', 'texto completo'] },
-  { id: 'dificil', nome: 'Difícil', cor: '--eosin', pares: 8, espiar: 0, oculta: true, maxFuncoes: 2, orcamento: 125, detalhe: ['sem espiada', 'letras ocultas'] },
+  { id: 'facil', nome: 'Fácil', cor: '--mint', pares: 4, espiar: 4000, oculta: false, maxFuncoes: 3, orcamento: 170, detalhe: ['espiada de 4 s', 'texto completo'] },
+  { id: 'medio', nome: 'Médio', cor: '--ouro', pares: 6, espiar: 2500, oculta: false, maxFuncoes: 2, orcamento: 125, detalhe: ['espiada de 2,5 s', 'texto completo'] },
+  { id: 'dificil', nome: 'Difícil', cor: '--eosin', pares: 8, espiar: 0, oculta: true, maxFuncoes: 2, orcamento: 125, detalhe: ['sem espiada', 'letras ocultas no nome'] },
 ];
 const tituloModo = m => `${TIPOS[m.pista].rotulo} → ${TIPOS[m.resposta].rotulo}`;
 
@@ -580,21 +582,15 @@ const som = {
 };
 
 /* ---------- conteúdo das cartas ---------- */
-function mascarar(texto, rng, modo) {
+/* Difícil: esconde metade das letras de cada palavra do nome (a primeira letra fica). */
+function mascarar(texto, rng) {
   let html = '', aria = '';
   for (const parte of texto.split(/(\s+)/)) {
     if (!parte) continue;
     if (/^\s+$/.test(parte)) { html += ' '; aria += ' '; continue; }
     const letras = [...parte];
     const idx = letras.map((c, i) => /\p{L}/u.test(c) ? i : -1).filter(i => i >= 0);
-    let ocultas = [];
-    if (modo === 'nome') {
-      if (idx.length >= 3) ocultas = embaralhar(idx.slice(1), rng).slice(0, Math.ceil((idx.length - 1) * .5));
-    } else if (idx.length >= 4) {
-      const r = rng();
-      if (r < .28) ocultas = idx.slice();
-      else if (r < .68) ocultas = embaralhar(idx.slice(1), rng).slice(0, Math.ceil((idx.length - 1) * .5));
-    }
+    const ocultas = idx.length >= 3 ? embaralhar(idx.slice(1), rng).slice(0, Math.ceil((idx.length - 1) * .5)) : [];
     const set = new Set(ocultas);
     html += '<span class="pal">' + letras.map((c, i) => set.has(i) ? '<i class="lacuna"></i>' : esc(c)).join('') + '</span>';
     aria += letras.map((c, i) => set.has(i) ? '_' : c).join('');
@@ -626,10 +622,10 @@ function frente(e, tipo, nivel, rng) {
     return { html: `<img src="${esc(e.imagem)}" alt="" draggable="false">`, texto: 'imagem de uma estrutura destacada' };
   }
   if (tipo === 'nome') {
-    const m = nivel.oculta ? mascarar(e.nome, rng, 'nome') : { html: esc(e.nome), texto: e.nome };
+    const m = nivel.oculta ? mascarar(e.nome, rng) : { html: esc(e.nome), texto: e.nome };
     return { html: `<span class="nome">${m.html}</span>`, texto: m.texto };
   }
-  const itens = escolherFuncoes(e, nivel, rng).map(t => nivel.oculta ? mascarar(cap(t), rng, 'funcao') : { html: esc(cap(t)), texto: cap(t) });
+  const itens = escolherFuncoes(e, nivel, rng).map(t => ({ html: esc(cap(t)), texto: cap(t) }));
   return {
     html: `<span class="funcoes">${itens.map(it => `<span class="item">${it.html}</span>`).join('')}</span>`,
     texto: itens.map(it => it.texto).join('; '),
@@ -679,7 +675,7 @@ function montarMenu() {
   atualizarMenu();
 }
 
-const AMOSTRA = mascarar('Lobo Frontal', mulberry32(11), 'nome').html;
+const AMOSTRA = mascarar('Lobo Frontal', mulberry32(11)).html;
 function atualizarMenu() {
   const m = MODOS.find(x => x.id === cfg.modo), n = NIVEIS.find(x => x.id === cfg.nivel);
   $('#nivel-det').innerHTML = `<span>${n.nome}: ${n.detalhe.join(' · ')}</span>${n.oculta ? `<span class="amostra" aria-hidden="true">${AMOSTRA}</span>` : ''}`;
@@ -938,17 +934,15 @@ async function espiar(ms, g) {
   jogo.estado = 'espiando';
   const todas = intercalar(jogo.cartas.pista, jogo.cartas.resposta);
   todas.forEach((c, i) => setTimeout(() => g === geracao && c.el.classList.add('aberta'), i * 25));
-  const elo = $('#elo'), barra = $('.barra', elo);
+  const elo = $('#elo');
   elo.classList.add('espiando');
-  barra.hidden = false;
-  const anim = barra.animate({ transform: ['scaleX(1)', 'scaleX(0)'] }, { duration: ms + todas.length * 25, easing: 'linear', fill: 'forwards' });
+  barraElo(ms + todas.length * 25);
   let resta = Math.ceil(ms / 1000);
   textoElo(`memorize · ${resta}`);
   const iv = setInterval(() => { if (--resta > 0 && g === geracao) textoElo(`memorize · ${resta}`); }, 1000);
   await espera(ms + todas.length * 25);
   clearInterval(iv);
-  anim.cancel();
-  barra.hidden = true;
+  pararBarraElo();
   elo.classList.remove('espiando');
   if (g !== geracao) return false;
   todas.forEach((c, i) => setTimeout(() => g === geracao && c.el.classList.remove('aberta'), i * 20));
@@ -959,6 +953,26 @@ async function espiar(ms, g) {
 function textoElo(t, seta = true) {
   $('#elo-texto').textContent = t;
   $('#elo-seta').innerHTML = seta ? ICONES.baixo : '';
+}
+
+/* Barrinha que esvazia no elo: mostra quanto tempo falta (espiada, leitura após erro). */
+let animBarra = null;
+function barraElo(ms) {
+  const barra = $('#elo .barra');
+  animBarra?.cancel();
+  barra.hidden = false;
+  animBarra = RM.matches ? null : barra.animate({ transform: ['scaleX(1)', 'scaleX(0)'] }, { duration: ms, easing: 'linear', fill: 'forwards' });
+}
+function pararBarraElo() {
+  animBarra?.cancel();
+  animBarra = null;
+  $('#elo .barra').hidden = true;
+}
+
+/* Tempo para ler um par errado: cresce com o texto das cartas (imagem não conta). */
+function tempoLeitura(...cartas) {
+  const letras = cartas.reduce((n, c) => n + (c.tipo === 'imagem' ? 0 : c.texto.length), 0);
+  return Math.min(5000, 1800 + letras * 25);
 }
 
 /* Destaca a vez: 'pista', 'resposta' ou nenhuma (null). */
@@ -986,7 +1000,7 @@ function atualizarLeitura(forcar = false) {
   if (!jogo || $('#leitura').hidden) return;
   for (const lado of ['pista', 'resposta']) {
     const slot = $(`#slot-${lado}`), c = jogo.aberta[lado];
-    const chave = c ? c.id : '';
+    const chave = c ? String(c.abertaEm) : '';
     if (!forcar && slot.dataset.chave === chave && slot.firstElementChild) continue;
     slot.dataset.chave = chave;
     slot.classList.remove('acerto', 'erro');
@@ -1011,8 +1025,10 @@ function marcarLeitura(classe) {
 }
 
 /* ---------- jogada ---------- */
+let contadorViradas = 0;
 function virar(c, abrir) {
   c.aberta = abrir;
+  if (abrir) c.abertaEm = ++contadorViradas;
   c.el.classList.toggle('aberta', abrir);
   c.el.setAttribute('aria-label', abrir
     ? `${rotuloLado(c)} ${c.indice + 1}: ${c.texto}`
@@ -1079,7 +1095,6 @@ function conferir(g) {
     const acabou = jogo.acertos === jogo.nivel.pares;
     destacar(acabou ? null : 'pista');
     atualizarHUD(true);
-    setTimeout(() => g === geracao && atualizarLeitura(), 950);
     if (acabou) {
       jogo.estado = 'fim';
       pararRelogio();
@@ -1095,18 +1110,28 @@ function conferir(g) {
     for (const c of [pista, resposta]) { c.el.classList.add('errou'); balancar(c.el); }
     marcarLeitura('erro');
     som.erro();
-    anunciar('Não formam um par.');
-    textoElo('não combinam', false);
+    anunciar('Não formam um par. Toque para continuar.');
     atualizarHUD();
-    setTimeout(() => {
-      if (g !== geracao) return;
+    // As cartas ficam abertas para leitura; um toque encerra a espera antes.
+    // O par continua na área de leitura até a próxima pista ser virada.
+    const tempo = tempoLeitura(pista, resposta);
+    const retomar = () => {
+      if (g !== geracao || jogo.retomar !== retomar) return;
+      clearTimeout(jogo.tRetomar);
+      jogo.retomar = null;
+      pararBarraElo();
+      $('#elo').classList.remove('errou');
       for (const c of [pista, resposta]) { c.el.classList.remove('errou'); virar(c, false); }
       jogo.aberta = { pista: null, resposta: null };
       destacar('pista');
-      atualizarLeitura();
       jogo.estado = 'jogando';
       textoElo('vire uma pista');
-    }, RM.matches ? 800 : 1150);
+    };
+    jogo.retomar = retomar;
+    jogo.tRetomar = setTimeout(retomar, tempo);
+    $('#elo').classList.add('errou');
+    barraElo(tempo);
+    textoElo('não combinam · toque para seguir', false);
   }
 }
 
@@ -1397,8 +1422,15 @@ function ligarEventos() {
   const mesa = $('#mesa');
   mesa.addEventListener('click', ev => {
     const el = ev.target.closest('.carta');
+    if (jogo?.retomar) {
+      jogo.retomar();
+      const c = el && mapaCartas.get(el);
+      if (c?.lado === 'pista') aoTocar(c);
+      return;
+    }
     if (el) aoTocar(mapaCartas.get(el));
   });
+  $('#leitura').addEventListener('click', () => jogo?.retomar?.());
   mesa.addEventListener('pointermove', ev => {
     if (ev.pointerType !== 'mouse' || RM.matches) return;
     const el = ev.target.closest('.carta');
