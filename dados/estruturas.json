@@ -1,0 +1,254 @@
+{
+  "titulo": "Estruturas do Encéfalo",
+  "fonte": "Fonte.pdf",
+  "estruturas": [
+    {
+      "id": "lobo-frontal",
+      "nome": "Lobo Frontal",
+      "imagem": "img/lobo-frontal.jpg",
+      "imagemTamanho": [
+        720,
+        538
+      ],
+      "funcoes": [
+        "funções cognitivas complexas, como planejamento, tomada de decisões e controle emocional.",
+        "pensamento abstrato, empatia",
+        "LOBO onde localiza-se o giro pre frontal area motora primaria, planejamento motor"
+      ],
+      "paginasPdf": {
+        "nome": 3,
+        "funcao": 2,
+        "imagem": 1
+      }
+    },
+    {
+      "id": "lobo-parietal",
+      "nome": "Lobo Parietal",
+      "imagem": "img/lobo-parietal.jpg",
+      "imagemTamanho": [
+        720,
+        578
+      ],
+      "funcoes": [
+        "Processamento da sensação do tato (dor, temperatura, etc)",
+        "Cognição",
+        "Orientação espacial",
+        "Coordenação de movimentos",
+        "Percepção visual",
+        "Fala",
+        "Leitura",
+        "Escrita",
+        "Cálculos"
+      ],
+      "paginasPdf": {
+        "nome": 5,
+        "funcao": 6,
+        "imagem": 7
+      }
+    },
+    {
+      "id": "lobo-da-insula",
+      "nome": "Lobo da Ínsula",
+      "imagem": "img/lobo-da-insula.jpg",
+      "imagemTamanho": [
+        720,
+        627
+      ],
+      "funcoes": [
+        "Envolvimento em vícios: desejos e ânsia",
+        "Empatia e reconhecimento emocional",
+        "Integração de informações emocionais e perceptivas",
+        "Controle visceral e somatopercepção",
+        "Percepção de paladar e olfato",
+        "Função vestibular (EQUILIBRIO CORPORAL)"
+      ],
+      "paginasPdf": {
+        "nome": 9,
+        "funcao": 10,
+        "imagem": 11
+      }
+    },
+    {
+      "id": "lobo-temporal",
+      "nome": "Lobo Temporal",
+      "imagem": "img/lobo-temporal.jpg",
+      "imagemTamanho": [
+        720,
+        514
+      ],
+      "funcoes": [
+        "PROCESSA ESTIMULOS AUDITIVOS (cortex auditivo)",
+        "Trabalha no processo de audição",
+        "Percebe sons",
+        "Realiza codificação, decodificação e interpretação da informação auditiva",
+        "Participa da memória e reconhecimento",
+        "Processa a informação e ajuda a passar da memória a curto prazo para a de longo prazo"
+      ],
+      "paginasPdf": {
+        "nome": 13,
+        "funcao": 14,
+        "imagem": 15
+      }
+    },
+    {
+      "id": "lobo-occipital",
+      "nome": "Lobo Occipital",
+      "imagem": "img/lobo-occipital.jpg",
+      "imagemTamanho": [
+        720,
+        509
+      ],
+      "funcoes": [
+        "VISÃO",
+        "Área de processamento visual do cérebro.",
+        "As áreas 17, 18 e 19 de Brodmann estão localizadas nesse lobo, e formam os córtices visuais.",
+        "A área 17 de Brodmann (V1) forma o córtex visual primário, enquanto as áreas V2, V3, V4 ou 18 e 19 de Brodmann formam o córtex de associação visual."
+      ],
+      "paginasPdf": {
+        "nome": 17,
+        "funcao": 18,
+        "imagem": 19
+      }
+    },
+    {
+      "id": "hipotalamo",
+      "nome": "Hipotálamo",
+      "imagem": "img/hipotalamo.jpg",
+      "imagemTamanho": [
+        650,
+        557
+      ],
+      "funcoes": [
+        "Regulação da temperatura corporal",
+        "Controle do apetite e da sede",
+        "Regulação do sono e ritmos circadianos",
+        "Produção e liberação de hormônios (ex: ADH, ocitocina)",
+        "Controle do sistema nervoso autônomo (ex: frequência cardíaca, pressão arterial)",
+        "Participação nas emoções e comportamento (em conexão com o sistema límbico)",
+        "Regulação da atividade da hipófise"
+      ],
+      "paginasPdf": {
+        "nome": 21,
+        "funcao": 22,
+        "imagem": 23
+      }
+    },
+    {
+      "id": "mesencefalo",
+      "nome": "Mesencéfalo",
+      "imagem": "img/mesencefalo.jpg",
+      "imagemTamanho": [
+        720,
+        676
+      ],
+      "funcoes": [
+        "Coordenação de reflexos visuais e auditivos (colículos superiores e inferiores)",
+        "Controle da movimentação ocular",
+        "Participação no controle motor (substância negra)",
+        "Regulação da consciência e da vigília (parte da formação reticular)"
+      ],
+      "paginasPdf": {
+        "nome": 25,
+        "funcao": 26,
+        "imagem": 27
+      }
+    },
+    {
+      "id": "ponte",
+      "nome": "Ponte",
+      "imagem": "img/ponte.jpg",
+      "imagemTamanho": [
+        654,
+        591
+      ],
+      "funcoes": [
+        "Condução de impulsos entre o cérebro e o cerebelo",
+        "Participação na regulação da respiração (centros respiratórios)",
+        "Coordenação motora com o cerebelo",
+        "Passagem e decussação de fibras nervosas"
+      ],
+      "paginasPdf": {
+        "nome": 29,
+        "funcao": 30,
+        "imagem": 31
+      }
+    },
+    {
+      "id": "bulbo",
+      "nome": "Bulbo",
+      "imagem": "img/bulbo.jpg",
+      "imagemTamanho": [
+        391,
+        720
+      ],
+      "funcoes": [
+        "Controle de funções vitais: respiração, frequência cardíaca, pressão arterial",
+        "Reflexos como: deglutição, tosse, espirro, vômito",
+        "Transmissão de impulsos entre o cérebro e a medula espinhal"
+      ],
+      "paginasPdf": {
+        "nome": 33,
+        "funcao": 34,
+        "imagem": 35
+      }
+    },
+    {
+      "id": "talamo",
+      "nome": "Tálamo",
+      "imagem": "img/talamo.jpg",
+      "imagemTamanho": [
+        720,
+        642
+      ],
+      "funcoes": [
+        "Central de retransmissão sensorial (exceto olfato)",
+        "Integração e transmissão de informações sensoriais ao córtex cerebral",
+        "Participação no controle motor (com os núcleos da base)",
+        "Modulação da consciência, sono e alerta"
+      ],
+      "paginasPdf": {
+        "nome": 37,
+        "funcao": 38,
+        "imagem": 39
+      }
+    },
+    {
+      "id": "giro-pre-central",
+      "nome": "Giro Pré-central",
+      "imagem": "img/giro-pre-central.jpg",
+      "imagemTamanho": [
+        720,
+        522
+      ],
+      "funcoes": [
+        "Controle voluntário da movimentação dos músculos esqueléticos",
+        "Organização somatotópica (homúnculo motor) – diferentes partes do giro controlam diferentes áreas do corpo",
+        "Lado esquerdo do giro controla o lado direito do corpo e vice-versa"
+      ],
+      "paginasPdf": {
+        "nome": 41,
+        "funcao": 42,
+        "imagem": 43
+      }
+    },
+    {
+      "id": "giro-pos-central",
+      "nome": "Giro Pós-central",
+      "imagem": "img/giro-pos-central.jpg",
+      "imagemTamanho": [
+        720,
+        523
+      ],
+      "funcoes": [
+        "Recepção e processamento de estímulos sensoriais táteis (toque, pressão, dor, temperatura)",
+        "Percepção da posição do corpo (propriocepção)",
+        "Organização somatotópica (homúnculo sensorial) – diferentes regiões recebem informações de diferentes partes do corpo"
+      ],
+      "paginasPdf": {
+        "nome": 45,
+        "funcao": 46,
+        "imagem": 47
+      }
+    }
+  ]
+}
