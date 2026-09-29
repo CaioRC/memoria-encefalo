@@ -15,6 +15,8 @@ Vire uma carta de **pista** e uma de **resposta**, em qualquer ordem, para forma
 | Estrutura → Função | imagem | funções |
 | Nome → Função | nome | funções |
 
+Com a opção **Misturar** ligada, pistas e respostas ficam embaralhadas numa mesa só, todas com o mesmo verso: qualquer duas cartas formam uma jogada, e só é par se forem da mesma estrutura e de tipos diferentes. O modo misturado tem recordes próprios.
+
 | Dificuldade | Pares | Espiada inicial | Texto |
 |---|---|---|---|
 | Fácil | 4 | 4 s | completo |

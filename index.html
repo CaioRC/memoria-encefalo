@@ -125,8 +125,22 @@ button{font:inherit; color:inherit}
 .instalar p{flex:1; min-width:150px; margin:0; max-width:36ch; font-size:.8rem; line-height:1.3}
 
 .painel{grid-area:painel; flex:none; display:grid; gap:14px; min-width:0}
-.painel fieldset{border:0; margin:0; padding:0; min-width:0}
-.painel legend{padding:0; margin-bottom:8px; font-family:var(--mono); font-size:.7rem; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2)}
+.painel fieldset{position:relative; border:0; margin:0; padding:0; min-width:0}
+.campo-topo{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:6px}
+.campo-topo .rotulo-campo{margin-bottom:0}
+.interruptor{position:relative; display:inline-flex; align-items:center; gap:7px; padding-block:2px; font-size:.8rem; font-weight:700; color:var(--ink-2); cursor:pointer}
+.interruptor input{position:absolute; opacity:0; pointer-events:none}
+.trilho{position:relative; width:34px; height:20px; border-radius:999px; background:var(--bg-2); border:1px solid var(--line); transition:background-color .2s, border-color .2s}
+.trilho::after{content:""; position:absolute; top:2px; left:2px; width:14px; height:14px; border-radius:50%; background:var(--superficie); box-shadow:0 1px 2px rgba(0,0,0,.3); transition:translate .3s var(--mola)}
+.interruptor input:checked + .trilho{background:var(--hema); border-color:var(--hema)}
+.interruptor input:checked + .trilho::after{translate:14px 0}
+.interruptor input:focus-visible + .trilho{outline:3px solid var(--foco); outline-offset:2px}
+.interruptor:has(input:checked){color:var(--ink)}
+.fluxo-seta,.fluxo-mais{display:inline-flex}
+.fluxo-seta svg,.fluxo-mais svg{width:14px; height:14px}
+.fluxo-mais,.modos.mistos .fluxo-seta{display:none}
+.modos.mistos .fluxo-mais{display:inline-flex}
+.painel legend,.rotulo-campo{padding:0; margin-bottom:8px; font-family:var(--mono); font-size:.7rem; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-2)}
 .modos{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px}
 .niveis{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px}
 .opcao{position:relative; min-width:0}
@@ -142,6 +156,7 @@ button{font:inherit; color:inherit}
 .ico svg{width:17px; height:17px}
 .ico.a{background:linear-gradient(155deg, var(--verso-pista-2), var(--verso-pista))}
 .ico.b{background:linear-gradient(155deg, var(--verso-resposta-2), var(--verso-resposta))}
+.ico.m{background:linear-gradient(155deg, var(--verso-resposta-2), var(--verso-pista) 75%)}
 .opcao .tit{font-family:var(--display); font-weight:700; font-size:.98rem; line-height:1.15; display:flex; align-items:center; gap:7px}
 .opcao .desc{display:none; font-size:.84rem; line-height:1.35; color:var(--ink-2)}
 .nivel label{justify-items:center; text-align:center; gap:3px; padding:10px 6px}
@@ -218,6 +233,8 @@ button{font:inherit; color:inherit}
 .mesa > :last-child{margin-bottom:auto}
 .bandeja{--lado:var(--hema); position:relative; width:max-content; max-width:100%; display:grid; padding:13px 7px 7px; border-radius:16px; background:color-mix(in srgb, var(--lado) 6%, transparent); border:1px dashed color-mix(in srgb, var(--lado) 30%, transparent); transition:background-color .35s, border-color .35s}
 .bandeja[data-lado="resposta"]{--lado:var(--eosin)}
+.bandeja.mista{--lado:var(--ink-2)}
+.bandeja.mista .rotulo span{color:var(--ink)}
 .bandeja.ativa{background:color-mix(in srgb, var(--lado) 12%, transparent); border:1px solid color-mix(in srgb, var(--lado) 60%, transparent)}
 .rotulo{position:absolute; top:0; left:12px; translate:0 -50%; display:flex; align-items:baseline; gap:6px; padding:2px 8px; border-radius:8px; background:var(--superficie); border:1px solid color-mix(in srgb, var(--lado) 30%, transparent); white-space:nowrap; font-size:.72rem; line-height:1.2; color:var(--ink-2)}
 .rotulo b{font-family:var(--mono); font-weight:500; font-size:.6rem; letter-spacing:.12em; text-transform:uppercase}
@@ -237,7 +254,8 @@ button{font:inherit; color:inherit}
 
 /* Área de leitura: as cartas abertas em tamanho legível, na zona do polegar */
 .leitura{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; height:clamp(124px,24vh,210px)}
-.slot{--lado:var(--hema); position:relative; min-width:0; min-height:0; container-type:inline-size; border-radius:16px}
+.slot{--lado:var(--ink-2); position:relative; min-width:0; min-height:0; container-type:inline-size; border-radius:16px}
+.slot[data-lado="pista"]{--lado:var(--hema)}
 .slot[data-lado="resposta"]{--lado:var(--eosin)}
 .slot .face{transform:none}
 .slot-vazio{position:absolute; inset:0; display:grid; place-content:center; justify-items:center; gap:6px; padding:10px; text-align:center; border-radius:16px; border:1.5px dashed color-mix(in srgb, var(--lado) 35%, transparent); background:color-mix(in srgb, var(--lado) 5%, transparent); color:var(--ink-2); font-size:.84rem; line-height:1.25; transition:border-color .3s, color .3s}
@@ -287,6 +305,7 @@ button{font:inherit; color:inherit}
 
 .verso{--c1:var(--verso-pista); --c2:var(--verso-pista-2); display:grid; place-items:center; color:#fff; background-image:var(--giros), linear-gradient(155deg, var(--c2), var(--c1) 72%); background-size:22cqi 22cqi, auto}
 [data-lado="resposta"] .verso{--c1:var(--verso-resposta); --c2:var(--verso-resposta-2)}
+.carta .verso.misto{--c1:var(--verso-pista); --c2:var(--verso-resposta-2)}
 .verso::before{content:""; position:absolute; inset:5cqi; border:1.5px solid rgba(255,255,255,.3); border-radius:max(5px,4.5cqi)}
 .verso-ico{width:36cqi; height:36cqi; border-radius:50%; display:grid; place-items:center; background:rgba(255,255,255,.14); box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35)}
 .verso-ico svg{width:60%; height:60%}
@@ -405,7 +424,8 @@ button{font:inherit; color:inherit}
 
     <form class="painel" id="form-menu">
       <fieldset>
-        <legend>Modo de jogo</legend>
+        <legend class="sr">Modo de jogo</legend>
+        <div class="campo-topo"><span class="rotulo-campo" aria-hidden="true">Modo de jogo</span><label class="interruptor" for="misturar" title="Pistas e respostas embaralhadas numa mesa só, com o mesmo verso"><input type="checkbox" id="misturar" role="switch"><span class="trilho" aria-hidden="true"></span>Misturar</label></div>
         <div class="modos" id="lista-modos"></div>
       </fieldset>
       <fieldset>
@@ -457,8 +477,8 @@ button{font:inherit; color:inherit}
     </div>
 
     <div class="leitura" id="leitura" hidden aria-hidden="true">
-      <div class="slot" id="slot-pista" data-lado="pista"></div>
-      <div class="slot" id="slot-resposta" data-lado="resposta"></div>
+      <div class="slot" id="slot-0"></div>
+      <div class="slot" id="slot-1"></div>
     </div>
   </section>
 </div>
@@ -557,6 +577,8 @@ const ICONES = {
   mudo: svg('<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>'),
   fechar: svg('<path d="M6 6l12 12M18 6L6 18"/>', 2.2),
   instalar: svg('<path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14"/>', 2.1),
+  cartas: svg('<rect x="3.5" y="7" width="11" height="14" rx="2"/><path d="M8.5 7V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-4"/>'),
+  mais: svg('<path d="M12 6v12M6 12h12"/>', 2.2),
   estrelaMini: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>',
   estrela: '<svg class="estrela" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z"/></svg>',
 };
@@ -578,10 +600,10 @@ const NIVEIS = [
   { id: 'medio', nome: 'Médio', cor: '--ouro', pares: 6, espiar: 2500, oculta: false, maxFuncoes: 2, orcamento: 125, detalhe: ['espiada de 2,5 s', 'texto completo'] },
   { id: 'dificil', nome: 'Difícil', cor: '--eosin', pares: 8, espiar: 0, oculta: true, maxFuncoes: 2, orcamento: 125, detalhe: ['sem espiada', 'letras ocultas no nome'] },
 ];
-const tituloModo = m => `${TIPOS[m.pista].rotulo} → ${TIPOS[m.resposta].rotulo}`;
+const tituloModo = (m, misturado = false) => `${TIPOS[m.pista].rotulo} ${misturado ? '+' : '→'} ${TIPOS[m.resposta].rotulo}`;
 
 const CHAVE = 'memoria-encefalo';
-const cfg = Object.assign({ modo: 'estrutura-nome', nivel: 'medio', som: true }, armazem.ler(`${CHAVE}:cfg`, {}));
+const cfg = Object.assign({ modo: 'estrutura-nome', nivel: 'medio', som: true, misturar: false }, armazem.ler(`${CHAVE}:cfg`, {}));
 if (!MODOS.some(m => m.id === cfg.modo)) cfg.modo = 'estrutura-nome';
 if (!NIVEIS.some(n => n.id === cfg.nivel)) cfg.nivel = 'medio';
 const salvarCfg = () => armazem.gravar(`${CHAVE}:cfg`, cfg);
@@ -690,7 +712,7 @@ function montarMenu() {
     <div class="opcao">
       <input type="radio" name="modo" id="modo-${m.id}" value="${m.id}" ${m.id === cfg.modo ? 'checked' : ''}>
       <label for="modo-${m.id}">
-        <span class="fluxo"><span class="ico a">${TIPOS[m.pista].ico}</span>${ICONES.seta}<span class="ico b">${TIPOS[m.resposta].ico}</span></span>
+        <span class="fluxo"><span class="ico a">${TIPOS[m.pista].ico}</span><span class="fluxo-seta">${ICONES.seta}</span><span class="fluxo-mais">${ICONES.mais}</span><span class="ico b">${TIPOS[m.resposta].ico}</span></span>
         <span class="tit">${tituloModo(m)}</span>
         <span class="desc">${m.dica}</span>
         <span class="recorde-modo" hidden></span>
@@ -705,9 +727,14 @@ function montarMenu() {
       </label>
     </div>`).join('');
 
+  $('#misturar').checked = !!cfg.misturar;
   $('#form-menu').addEventListener('change', ev => {
     if (ev.target.name === 'modo') cfg.modo = ev.target.value;
     if (ev.target.name === 'nivel') cfg.nivel = ev.target.value;
+    if (ev.target.id === 'misturar') {
+      cfg.misturar = ev.target.checked;
+      aviso(cfg.misturar ? 'Mesa misturada: todas as cartas juntas, com o mesmo verso' : 'Mesa separada: pistas em cima, respostas embaixo', 2400);
+    }
     salvarCfg(); atualizarMenu();
   });
   $('#form-menu').addEventListener('submit', ev => { ev.preventDefault(); if (DADOS) iniciarPartida(); });
@@ -718,10 +745,12 @@ const AMOSTRA = mascarar('Lobo Frontal', mulberry32(11)).html;
 function atualizarMenu() {
   const n = NIVEIS.find(x => x.id === cfg.nivel);
   $('#nivel-det').innerHTML = `<span>${n.nome}: ${n.detalhe.join(' · ')}</span>${n.oculta ? `<span class="amostra" aria-hidden="true">${AMOSTRA}</span>` : ''}`;
-  // Recorde como selo no card de cada modo (na dificuldade escolhida); modo nunca jogado fica sem selo.
+  // Recorde como selo no card de cada modo (na dificuldade e mesa escolhidas); modo nunca jogado fica sem selo.
+  $('#lista-modos').classList.toggle('mistos', !!cfg.misturar);
   for (const m of MODOS) {
+    $(`label[for="modo-${m.id}"] .tit`).textContent = tituloModo(m, cfg.misturar);
     const selo = $(`label[for="modo-${m.id}"] .recorde-modo`);
-    const rec = armazem.ler(`${CHAVE}:recorde:${m.id}:${n.id}`);
+    const rec = armazem.ler(chaveRecorde(m.id, n.id, cfg.misturar));
     selo.hidden = !rec;
     selo.innerHTML = rec ? `${ICONES.estrelaMini}${fmt(rec.pontos)}<span class="sr"> pontos, seu recorde no ${n.nome}</span>` : '';
   }
@@ -811,10 +840,13 @@ $('#arquivo-json').addEventListener('change', async ev => {
 });
 
 /* ---------- partida ---------- */
+const chaveRecorde = (modoId, nivelId, misturado) => `${CHAVE}:recorde:${modoId}:${nivelId}${misturado ? ':misturado' : ''}`;
+
 function novoJogo() {
   const modo = MODOS.find(m => m.id === cfg.modo);
   const base = NIVEIS.find(n => n.id === cfg.nivel);
   const nivel = { ...base, pares: Math.min(base.pares, DADOS.estruturas.length) };
+  const misturado = !!cfg.misturar;
   const rng = mulberry32((Date.now() ^ (Math.random() * 1e9)) >>> 0);
   const escolhidas = embaralhar(DADOS.estruturas.slice(), rng).slice(0, nivel.pares);
   const cartas = { pista: [], resposta: [] };
@@ -826,32 +858,49 @@ function novoJogo() {
     }
   }
   embaralhar(cartas.pista, rng); embaralhar(cartas.resposta, rng);
-  jogo = { modo, nivel, rng, escolhidas, cartas, aberta: { pista: null, resposta: null }, estado: 'distribuindo',
+  // Ordem na mesa e na distribuição: separadas (intercaladas) ou todas embaralhadas juntas.
+  const todas = misturado ? embaralhar([...cartas.pista, ...cartas.resposta], rng) : intercalar(cartas.pista, cartas.resposta);
+  jogo = { modo, nivel, misturado, rng, escolhidas, cartas, todas, abertas: [], estado: 'distribuindo',
            jogadas: 0, acertos: 0, pontos: 0, combo: 0, melhorCombo: 0, inicio: 0, fim: 0, timer: null };
 }
 
 const mapaCartas = new WeakMap();
-const rotuloLado = c => c.lado === 'pista' ? 'Pista' : 'Resposta';
+const rotuloLado = c => jogo?.misturado ? 'Carta' : c.lado === 'pista' ? 'Pista' : 'Resposta';
+// Na mesa misturada a carta fechada não revela o tipo (nem no verso, nem para leitor de tela).
+const rotuloFechada = c => jogo.misturado
+  ? `Carta ${c.indice + 1}, virada para baixo`
+  : `${rotuloLado(c)} ${c.indice + 1}: ${TIPOS[c.tipo].rotulo.toLowerCase()}, virada para baixo`;
+const versoMistoHTML = `<span class="face verso misto"><span class="verso-ico">${ICONES.cartas}</span><span class="verso-rot">Carta</span></span>`;
 
 function elCarta(c, i) {
   const b = document.createElement('button');
   b.type = 'button';
   b.className = `carta tipo-${c.tipo}`;
   b.dataset.lado = c.lado;
-  b.setAttribute('aria-label', `${rotuloLado(c)} ${i + 1}: ${TIPOS[c.tipo].rotulo.toLowerCase()}, virada para baixo`);
-  b.innerHTML = `<span class="inclina"><span class="gira">${versoHTML(c.tipo)}<span class="face frente">${c.html}<span class="selo">${ICONES.check}</span></span></span></span>`;
   c.indice = i;
+  b.setAttribute('aria-label', rotuloFechada(c));
+  const verso = jogo.misturado ? versoMistoHTML : versoHTML(c.tipo);
+  b.innerHTML = `<span class="inclina"><span class="gira">${verso}<span class="face frente">${c.html}<span class="selo">${ICONES.check}</span></span></span></span>`;
   mapaCartas.set(b, c);
   return b;
 }
 
 function montarMesa() {
-  const { modo, nivel } = jogo;
-  $('#rot-pista').textContent = TIPOS[modo.pista].rotulo;
+  const { modo, nivel, misturado } = jogo;
+  const titulo = tituloModo(modo, misturado);
+  $('#bandeja-pista').classList.toggle('mista', misturado);
+  $('#bandeja-resposta').hidden = misturado;
+  $('#rot-pista').previousElementSibling.textContent = misturado ? 'Mesa' : 'Pistas';
+  $('#rot-pista').textContent = misturado ? titulo : TIPOS[modo.pista].rotulo;
   $('#rot-resposta').textContent = TIPOS[modo.resposta].rotulo;
-  $('#chip-modo').textContent = `${tituloModo(modo)} · ${nivel.nome}`;
-  for (const lado of ['pista', 'resposta']) {
-    $(`#grade-${lado}`).replaceChildren(...jogo.cartas[lado].map((c, i) => (c.el = elCarta(c, i))));
+  $('#chip-modo').textContent = `${titulo} · ${nivel.nome}`;
+  if (misturado) {
+    $('#grade-pista').replaceChildren(...jogo.todas.map((c, i) => (c.el = elCarta(c, i))));
+    $('#grade-resposta').replaceChildren();
+  } else {
+    for (const lado of ['pista', 'resposta']) {
+      $(`#grade-${lado}`).replaceChildren(...jogo.cartas[lado].map((c, i) => (c.el = elCarta(c, i))));
+    }
   }
   destacar(null);
   eloLivre();
@@ -860,20 +909,21 @@ function montarMesa() {
   atualizarHUD();
 }
 
-/* Tamanho das cartas: usa todo o espaço livre. Em telas pequenas, liga a área de leitura. */
-function medirCartas(n) {
+/* Tamanho das cartas: usa todo o espaço livre. n = cartas por bandeja; nb = bandejas (1 misturada, 2 separadas).
+   Em telas pequenas, liga a área de leitura. */
+function medirCartas(n, nb) {
   const mesa = $('#mesa'), bs = getComputedStyle($('#bandeja-pista')), ms = getComputedStyle(mesa);
   const px = v => parseFloat(v) || 0;
   const W = mesa.clientWidth - px(bs.paddingLeft) - px(bs.paddingRight) - 2 * px(bs.borderLeftWidth);
-  const H = mesa.clientHeight - px(ms.paddingTop) - px(ms.paddingBottom) - 2 * px(ms.rowGap) - $('#elo').offsetHeight
-          - 2 * (px(bs.paddingTop) + px(bs.paddingBottom) + 2 * px(bs.borderTopWidth)) - 2;
+  const H = mesa.clientHeight - px(ms.paddingTop) - px(ms.paddingBottom) - nb * px(ms.rowGap) - $('#elo').offsetHeight
+          - nb * (px(bs.paddingTop) + px(bs.paddingBottom) + 2 * px(bs.borderTopWidth)) - 2;
   const gap = W < 560 ? 6 : 12;
   let melhor = null;
   for (let r = 1; r <= n; r++) {
     const cols = Math.ceil(n / r);
     if (r > 1 && Math.ceil(n / (r - 1)) === cols) continue;
     const wW = (W - gap * (cols - 1)) / cols;
-    const hL = (H - gap * (2 * r - 2)) / (2 * r);
+    const hL = (H - gap * nb * (r - 1)) / (nb * r);
     const w = Math.min(wW, hL, 210);
     const h = Math.min(hL, w * 1.28);
     if (w <= 0 || h <= 0) continue;
@@ -892,11 +942,12 @@ function layout() {
   if (!jogo || $('#tela-jogo').hidden) return;
   const tela = $('#tela-jogo'), leitura = $('#leitura');
   const tinha = !leitura.hidden;
+  const [n, nb] = jogo.misturado ? [2 * jogo.nivel.pares, 1] : [jogo.nivel.pares, 2];
   tela.classList.remove('com-leitura'); leitura.hidden = true;
-  let m = medirCartas(jogo.nivel.pares);
+  let m = medirCartas(n, nb);
   if (m.w < 124 && innerWidth < 900) {
     tela.classList.add('com-leitura'); leitura.hidden = false;
-    m = medirCartas(jogo.nivel.pares);
+    m = medirCartas(n, nb);
   }
   const mesa = $('#mesa');
   mesa.classList.toggle('rolavel', !!m.rolavel);
@@ -928,6 +979,7 @@ async function iniciarPartida() {
   jogo.estado = 'jogando';
   destacar(null);
   eloLivre();
+  atualizarLeitura();
 }
 
 function trocarTela(de, para) {
@@ -945,9 +997,8 @@ function origemBaralho() {
 
 async function distribuir() {
   if (RM.matches) return;
-  const todas = intercalar(jogo.cartas.pista, jogo.cartas.resposta);
   const o = origemBaralho();
-  const anims = todas.map((c, i) => {
+  const anims = jogo.todas.map((c, i) => {
     const r = c.el.getBoundingClientRect();
     const dx = o.x - (r.left + r.width / 2), dy = o.y - (r.top + r.height / 2);
     return c.el.animate([
@@ -961,9 +1012,8 @@ async function distribuir() {
 
 async function recolher() {
   if (RM.matches || !jogo) return;
-  const todas = intercalar(jogo.cartas.pista, jogo.cartas.resposta);
   const o = origemBaralho();
-  const anims = todas.map((c, i) => {
+  const anims = jogo.todas.map((c, i) => {
     const r = c.el.getBoundingClientRect();
     const dx = o.x - (r.left + r.width / 2), dy = o.y - (r.top + r.height / 2);
     return c.el.animate([
@@ -976,7 +1026,7 @@ async function recolher() {
 
 async function espiar(ms, g) {
   jogo.estado = 'espiando';
-  const todas = intercalar(jogo.cartas.pista, jogo.cartas.resposta);
+  const todas = jogo.todas;
   todas.forEach((c, i) => setTimeout(() => g === geracao && c.el.classList.add('aberta'), i * 25));
   const elo = $('#elo');
   elo.classList.add('espiando');
@@ -994,12 +1044,14 @@ async function espiar(ms, g) {
   return g === geracao;
 }
 
-/* seta: 'baixo', 'cima', 'ambos' ou false */
+/* seta: 'baixo', 'cima', 'ambos', 'cartas' ou false */
 function textoElo(t, seta = 'baixo') {
   $('#elo-texto').textContent = t;
   $('#elo-seta').innerHTML = seta ? ICONES[seta] : '';
 }
-const eloLivre = () => textoElo('vire uma carta de cada lado', 'ambos');
+const eloLivre = () => jogo?.misturado
+  ? textoElo('vire duas cartas', 'cartas')
+  : textoElo('vire uma carta de cada lado', 'ambos');
 
 /* Barrinha que esvazia no elo: mostra quanto tempo falta (espiada, leitura após erro). */
 let animBarra = null;
@@ -1027,7 +1079,6 @@ function destacar(lado) {
   for (const l of ['pista', 'resposta']) {
     $(`#bandeja-${l}`).classList.toggle('ativa', lado === l);
     $(`#bandeja-${l}`).classList.toggle('espera', !!lado && lado !== l);
-    $(`#slot-${l}`).classList.toggle('vez', lado === l);
   }
   $('#elo').classList.toggle('ativa', !!lado);
   $('#elo').classList.toggle('para-pista', lado === 'pista');
@@ -1037,23 +1088,36 @@ function destacar(lado) {
   }
 }
 
-/* ---------- área de leitura ---------- */
-function vazioHTML(lado) {
-  const tipo = jogo.modo[lado];
-  return `<div class="slot-vazio"><span class="ico ${lado === 'pista' ? 'a' : 'b'}">${TIPOS[tipo].ico}</span>`
-       + `<span>${lado === 'pista' ? 'Carta de cima' : 'Carta de baixo'}</span>`
-       + `<span class="slot-tipo">${TIPOS[tipo].rotulo}</span></div>`;
+/* ---------- área de leitura: 1ª e 2ª carta abertas, em tamanho legível ---------- */
+function vazioHTML(i) {
+  const primeira = jogo.abertas[0];
+  let lado = '', ico = ICONES.cartas, texto, tipo = '';
+  if (i === 0) texto = 'Vire uma carta';
+  else if (!primeira) texto = 'Depois, o par';
+  else if (jogo.misturado) texto = 'Agora, o par dela';
+  else {
+    lado = primeira.lado === 'pista' ? 'resposta' : 'pista';
+    tipo = TIPOS[jogo.modo[lado]].rotulo;
+    ico = TIPOS[jogo.modo[lado]].ico;
+    texto = `Agora: ${tipo.toLowerCase()}`;
+  }
+  const cor = lado === 'pista' ? 'a' : lado === 'resposta' ? 'b' : 'm';
+  return { lado, html: `<div class="slot-vazio"><span class="ico ${cor}">${ico}</span><span>${texto}</span>${tipo ? `<span class="slot-tipo">${tipo}</span>` : ''}</div>` };
 }
 
 function atualizarLeitura(forcar = false) {
   if (!jogo || $('#leitura').hidden) return;
-  for (const lado of ['pista', 'resposta']) {
-    const slot = $(`#slot-${lado}`), c = jogo.aberta[lado];
-    const chave = c ? String(c.abertaEm) : '';
+  const n = jogo.abertas.length;
+  for (const i of [0, 1]) {
+    const slot = $(`#slot-${i}`), c = jogo.abertas[i];
+    slot.classList.toggle('vez', !c && i === n && jogo.estado === 'jogando');
+    const chave = c ? `c${c.abertaEm}` : `v${n}:${jogo.abertas[0]?.lado || ''}`;
     if (!forcar && slot.dataset.chave === chave && slot.firstElementChild) continue;
+    const vazio = c ? null : vazioHTML(i);
     slot.dataset.chave = chave;
+    slot.dataset.lado = c ? c.lado : vazio.lado;
     slot.classList.remove('acerto', 'erro');
-    slot.innerHTML = c ? `<span class="face frente">${c.html}<span class="selo">${ICONES.check}</span></span>` : vazioHTML(lado);
+    slot.innerHTML = c ? `<span class="face frente">${c.html}<span class="selo">${ICONES.check}</span></span>` : vazio.html;
     ajustarTextos(slot);
     if (!RM.matches && !forcar) {
       slot.firstElementChild.animate(c
@@ -1079,39 +1143,45 @@ function virar(c, abrir) {
   c.aberta = abrir;
   if (abrir) c.abertaEm = ++contadorViradas;
   c.el.classList.toggle('aberta', abrir);
-  c.el.setAttribute('aria-label', abrir
-    ? `${rotuloLado(c)} ${c.indice + 1}: ${c.texto}`
-    : `${rotuloLado(c)} ${c.indice + 1}: ${TIPOS[c.tipo].rotulo.toLowerCase()}, virada para baixo`);
+  c.el.setAttribute('aria-label', abrir ? `${rotuloLado(c)} ${c.indice + 1}: ${c.texto}` : rotuloFechada(c));
   if (!RM.matches) $('.inclina', c.el).animate({ scale: [1, 1.09, 1] }, { duration: 560, easing: 'ease-out' });
   som.virar();
 }
 
+/* Uma jogada = duas cartas abertas.
+   Mesa separada: uma de cada lado, em qualquer ordem. Mesa misturada: quaisquer duas. */
 function aoTocar(c) {
   if (!c || !jogo) return;
   if (c.acertada) { if (jogo.estado === 'jogando' || jogo.estado === 'fim') abrirFicha(c.e); return; }
   if (jogo.estado !== 'jogando' || c.aberta) return;
-  // Uma jogada = uma carta de cada lado, em qualquer ordem (pista → resposta ou resposta → pista).
-  const a = jogo.aberta;
-  const outro = c.lado === 'pista' ? 'resposta' : 'pista';
-  const rotuloOutro = TIPOS[jogo.modo[outro]].rotulo.toLowerCase();
-  if (a[c.lado]) {
+  const primeira = jogo.abertas[0];
+  if (primeira && !jogo.misturado && primeira.lado === c.lado) {
+    const outro = c.lado === 'pista' ? 'resposta' : 'pista';
     balancar($(`#bandeja-${outro}`), 5);
-    aviso(`Agora vire uma carta do outro lado: ${rotuloOutro}`);
+    aviso(`Agora vire uma carta do outro lado: ${TIPOS[jogo.modo[outro]].rotulo.toLowerCase()}`);
     som.cutucar();
     return;
   }
   iniciarRelogio();
   virar(c, true);
-  a[c.lado] = c;
-  atualizarLeitura();
-  if (!a[outro]) {
-    destacar(outro);
-    textoElo(`agora ache: ${rotuloOutro}`, outro === 'resposta' ? 'baixo' : 'cima');
+  jogo.abertas.push(c);
+  if (jogo.abertas.length === 1) {
+    if (jogo.misturado) {
+      destacar(null);
+      $('#elo').classList.add('ativa');
+      textoElo('agora ache o par', 'cartas');
+    } else {
+      const outro = c.lado === 'pista' ? 'resposta' : 'pista';
+      destacar(outro);
+      textoElo(`agora ache: ${TIPOS[jogo.modo[outro]].rotulo.toLowerCase()}`, outro === 'resposta' ? 'baixo' : 'cima');
+    }
+    atualizarLeitura();
     return;
   }
   jogo.jogadas++;
   jogo.estado = 'conferindo';
   destacar(null);
+  atualizarLeitura();
   atualizarHUD();
   const g = geracao;
   setTimeout(() => conferir(g), RM.matches ? 300 : 560);
@@ -1119,14 +1189,15 @@ function aoTocar(c) {
 
 function conferir(g) {
   if (g !== geracao) return;
-  const { pista, resposta } = jogo.aberta;
-  if (pista.id === resposta.id) {
+  const [a, b] = jogo.abertas;
+  // Par = mesma estrutura e tipos diferentes (duas cartas do mesmo tipo nunca formam par).
+  if (a.id === b.id && a.lado !== b.lado) {
     jogo.combo++;
     jogo.melhorCombo = Math.max(jogo.melhorCombo, jogo.combo);
     const mult = Math.min(jogo.combo, 5), ganho = 100 * mult;
     jogo.pontos += ganho;
     jogo.acertos++;
-    for (const c of [pista, resposta]) {
+    for (const c of [a, b]) {
       c.acertada = true; c.aberta = false;
       c.el.classList.remove('aberta');
       c.el.classList.add('acertada', 'brilha');
@@ -1136,11 +1207,10 @@ function conferir(g) {
       explodir(c.el);
     }
     marcarLeitura('acerto');
-    const segunda = pista.abertaEm > resposta.abertaEm ? pista : resposta;
-    flutuar(segunda.el, mult > 1 ? `+${ganho} ×${mult}` : `+${ganho}`);
+    flutuar(b.el, mult > 1 ? `+${ganho} ×${mult}` : `+${ganho}`);
     som.acerto(jogo.combo);
-    anunciar(`Acertou: ${pista.e.nome}. ${jogo.acertos} de ${jogo.nivel.pares} pares.`);
-    jogo.aberta = { pista: null, resposta: null };
+    anunciar(`Acertou: ${a.e.nome}. ${jogo.acertos} de ${jogo.nivel.pares} pares.`);
+    jogo.abertas = [];
     const acabou = jogo.acertos === jogo.nivel.pares;
     destacar(null);
     atualizarHUD(true);
@@ -1151,28 +1221,29 @@ function conferir(g) {
       setTimeout(() => vitoria(g), 700);
     } else {
       jogo.estado = 'jogando';
-      if (jogo.combo > 1) textoElo(`combo ×${mult}! próximo par`, 'ambos');
+      if (jogo.combo > 1) textoElo(`combo ×${mult}! próximo par`, jogo.misturado ? 'cartas' : 'ambos');
       else eloLivre();
       if (jogo.acertos === 1) aviso('Toque numa carta acertada para ver a ficha completa', 2800);
     }
   } else {
     jogo.combo = 0;
-    for (const c of [pista, resposta]) { c.el.classList.add('errou'); balancar(c.el); }
+    for (const c of [a, b]) { c.el.classList.add('errou'); balancar(c.el); }
     marcarLeitura('erro');
     som.erro();
-    anunciar('Não formam um par. Toque para continuar.');
+    const mesmoTipo = a.tipo === b.tipo ? TIPOS[a.tipo].rotulo.toLowerCase() : '';
+    anunciar(mesmoTipo ? `Duas cartas de ${mesmoTipo} não formam par. Toque para continuar.` : 'Não formam um par. Toque para continuar.');
     atualizarHUD();
     // As cartas ficam abertas para leitura; um toque encerra a espera antes.
     // O par continua na área de leitura até a próxima carta ser virada.
-    const tempo = tempoLeitura(pista, resposta);
+    const tempo = tempoLeitura(a, b);
     const retomar = () => {
       if (g !== geracao || jogo.retomar !== retomar) return;
       clearTimeout(jogo.tRetomar);
       jogo.retomar = null;
       pararBarraElo();
       $('#elo').classList.remove('errou');
-      for (const c of [pista, resposta]) { c.el.classList.remove('errou'); virar(c, false); }
-      jogo.aberta = { pista: null, resposta: null };
+      for (const c of [a, b]) { c.el.classList.remove('errou'); virar(c, false); }
+      jogo.abertas = [];
       destacar(null);
       jogo.estado = 'jogando';
       eloLivre();
@@ -1181,7 +1252,7 @@ function conferir(g) {
     jogo.tRetomar = setTimeout(retomar, tempo);
     $('#elo').classList.add('errou');
     barraElo(tempo);
-    textoElo('não combinam · toque para seguir', false);
+    textoElo(`${mesmoTipo ? `duas de ${mesmoTipo}` : 'não combinam'} · toque para seguir`, false);
   }
 }
 
@@ -1317,14 +1388,15 @@ function confete(ms = 3400) {
 async function vitoria(g) {
   if (g !== geracao) return;
   const j = jogo, n = j.nivel.pares;
-  const estrelas = j.jogadas <= Math.ceil(n * 1.5) ? 3 : j.jogadas <= n * 2 + 1 ? 2 : 1;
-  const chave = `${CHAVE}:recorde:${j.modo.id}:${j.nivel.id}`;
+  const [tres, duas] = j.misturado ? [n * 2, n * 3] : [Math.ceil(n * 1.5), n * 2 + 1];
+  const estrelas = j.jogadas <= tres ? 3 : j.jogadas <= duas ? 2 : 1;
+  const chave = chaveRecorde(j.modo.id, j.nivel.id, j.misturado);
   const rec = armazem.ler(chave);
   const novo = !rec || j.pontos > rec.pontos || (j.pontos === rec.pontos && j.jogadas < rec.jogadas);
   if (novo) armazem.gravar(chave, { pontos: j.pontos, jogadas: j.jogadas, tempo: j.fim - j.inicio });
 
   if (!RM.matches) {
-    intercalar(j.cartas.pista, j.cartas.resposta).forEach((c, i) =>
+    j.todas.forEach((c, i) =>
       c.el.animate({ translate: ['0 0', '0 -14px', '0 0'], rotate: ['0deg', `${i % 2 ? -5 : 5}deg`, '0deg'] }, { duration: 560, delay: i * 38, easing: 'cubic-bezier(.3,1.5,.5,1)' }));
   }
   som.vitoria();
@@ -1332,7 +1404,7 @@ async function vitoria(g) {
   if (g !== geracao) return;
 
   $('#fim-titulo').textContent = ['Neurônios aquecidos!', 'Sinapses afiadas!', 'Memória de neurocirurgião!'][estrelas - 1];
-  $('#fim-sub').textContent = `${tituloModo(j.modo)} · ${j.nivel.nome} · ${n} pares`;
+  $('#fim-sub').textContent = `${tituloModo(j.modo, j.misturado)} · ${j.nivel.nome} · ${n} pares`;
   $('#fim-tempo').textContent = mmss(j.fim - j.inicio);
   $('#fim-jogadas').textContent = j.jogadas;
   $('#fim-combo').textContent = `×${j.melhorCombo}`;
